@@ -67,7 +67,7 @@ for p in puzzleList:
 	checkIndex = 0;
 
 	def rowDigitChecker(digit):
-
+		noNew = True;
 		def currentCheck(line):	
 			return line.index(digit);
 			# checkIndex = line.index(digit);
@@ -76,6 +76,7 @@ for p in puzzleList:
 			# return newGrid;
 
 		def currentGridChecker(line, grid):
+			
 			newGrid = grid;
 			# checkIndex = line.index(digit);
 			if workingPuzzle.index(line) not in grid:
@@ -83,32 +84,23 @@ for p in puzzleList:
 			return newGrid;
 
 		line = 0;
-		# firstGrid = [0,1,2];
-		# secondGrid = [3,4,5];
-		# thirdGrid = [6,7,8];
 		currentGrid = getGrid(line);
-		# print ('currentGrid', currentGrid)
 
 		lineIndex = 0;
 		while lineIndex < 7:
-		# for workingLine in workingPuzzle:
 			workingLine = workingPuzzle[lineIndex]
-			# found = False;
 			first = [digit in workingLine, 0];
 			second = [digit in workingPuzzle[workingPuzzle.index(workingLine)+1], 1];
 			third = [digit in workingPuzzle[workingPuzzle.index(workingLine)+2], 2];
 			found = [first, second, third];
-			# found.index(True)
 			successes = [f[1] for f in found if f[0]]
 			# print ('successes', successes)
 
-			# if (first and (second ^ third)) or (second and (first ^ third)) or (third and (first ^ second)):
 			if len(successes) == 2:
-				# this is where the stuff goes
 				print 'heyo'
 				# figure out which two column grids have been done already, 
 				# check that rows' grids' 0's
-				# Get one that's ont used and check other rows at 0's indices 
+				# Get one that's not used and check other rows at 0's indices 
 				line1 = workingPuzzle[workingPuzzle.index(workingLine)+successes[0]];
 				index1 = line1.index(digit);
 				grid1 = getGrid(index1);
@@ -126,15 +118,12 @@ for p in puzzleList:
 
 				print ('lines',workingPuzzle.index(line1), workingPuzzle.index(line2))
 				if (successes[1] - successes[0] == 2):
-					# line3 = workingPuzzle.index(line1)
 					line3 = workingPuzzle[workingPuzzle.index(workingLine)+1];
 				elif (workingPuzzle.index(line1) == 0 or workingPuzzle.index(line1) == 3 or workingPuzzle.index(line1) == 6):
 					line3 = workingPuzzle[workingPuzzle.index(workingLine)+2];
 				else:
 					line3 = workingPuzzle[workingPuzzle.index(workingLine)];
-				# if (line1 == 0 and line2 == 1):
-				# print ('3 ',line3,workingPuzzle.index(line3) );
-
+				
 				# searching line 3 w/i grid 3 for 0's to find available
 				# comparing column at indicies of 0s to see if we can rule any out
 				print ('3s ', line3, grid3);
@@ -147,24 +136,41 @@ for p in puzzleList:
 						
 				matches = [];
 				for z in zeroes:
-					# print 'z'
 					# print ('z? ',z)
 					for testLine in workingPuzzle:
 						if testLine[z] == digit:
 							zeroes.remove(z);
 				if len(zeroes) == 1:
 					print 'YEAY'
-					print (line3, digit, zeroes[0])
-					
+					# print (line3, digit, zeroes[0])
+					noNew = False;
+
 					newLine = line3[:zeroes[0]] + str(digit) + line3[zeroes[0]+1:];
 					# newLine[zeroes[0]] = str(digit);
 					workingPuzzle[workingPuzzle.index(line3)] = newLine;
-					# if 
+
+			lineIndex += 3;
+		return noNew;
+
+
+	done = False;
+	while not done:
+		allDone = True;
+	 	for digit in possibleDigits:
+	 		if rowDigitChecker(digit) == False:
+	 			allDone = False;
+	 	if allDone == True:
+	 		done = True;
+
+	# rowDigitChecker(possibleDigits[0]);
+
+print workingPuzzle;
 
 
 
 
-				
+
+
 				# print ('openGrid', openGrid)
 
 
@@ -192,22 +198,5 @@ for p in puzzleList:
 			# 		print ('currentCheck and currentGrid', currentCheck, currentGrid);
 
 				# checkIndex & workingLine.index(digit);
-
-			lineIndex += 3;
-			# reset currentGrid
-
-
- 	for digit in possibleDigits:
- 		rowDigitChecker(digit);
-	# rowDigitChecker(possibleDigits[0]);
-
-print workingPuzzle;
-
-
-
-
-
-
-
 
 
