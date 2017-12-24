@@ -33,17 +33,96 @@ def loadSuccesses():
 puzzleList = [['003020600', '900305001', '001806400', '008102900', '700000008', '006708200', '002609500', '800203009', '005010300']];
 # print puzzleList;
 
-
-
 solutionsList = [];
 for p in puzzleList:
+	# iterate through each puzzle from the text file
+	startIndex = 0;
 	workingPuzzle = p;
+	possiblySolved = [];
 	possibleDigits = '123456789';
+	for line in workingPuzzle:
+		thisLineDigits = '';
+		for d in possibleDigits:
+			if d not in line:
+				thisLineDigits += d;
+		# print thisLineDigits;
+		for digit in line:
+			# print digit
+			if digit == '0':
+				line = line[:line.index(digit)] + thisLineDigits[startIndex] + line[line.index(digit)+1:]
+				# print line
+				# line[line.index(digit)] = ;
+				thisLineDigits = thisLineDigits[1:];
+				# what happens when it finds an error?  maybe inc start index by 1? 
+				# or shuffle digits around? but dont let start digit end up in same place? 
+		# print line;
+		possiblySolved.append(line);
+	# print possiblySolved;
+	possiblySolved=['123527689', 
+	'456365781', 
+	'789856479', 
+	'348152967', 
+	'712345698', 
+	'136748259', 
+	'132649578', 
+	'814253679', 
+	'245617389'];
+
+	def gridChecker(rowStart, colStart):
+		gridNums = '';
+		count = 0;
+		line = possiblySolved[rowStart];
+		while count < 9:
+			print line;
+			colCount = 0;
+			if count == 3:
+				line = possiblySolved[rowStart+1];
+				colCount = 0;
+			elif count == 6: 
+				line = possiblySolved[rowStart+2];
+				colCount = 0;
+			digit = line[colStart+colCount];
+			if digit in gridNums:
+				print digit, gridNums;
+				# return False;
+			else:
+				gridNums += digit;
+			count += 1;
+			colCount += 1;
+		print gridNums;
+		return True;
+
+		# 
+		# line2 = possiblySolved[rowStart+1];
+		# line3 = possiblySolved[rowStart+2];
+
+
+		# gridNums += line1[colStart];
+		# 	if line1[colStart+1] not in gridNums:
+		# 		gridNums += 
 
 
 
+	gridRowIndex = 0;
+	while gridRowIndex < 7:
+		# check each 3x3 grid for numbers 1-9, no repeats
+		gridColIndex = 0;
+		while gridColIndex < 7:
+			if gridChecker (gridRowIndex, gridColIndex):
+				print 'yeah'
+			else:
+				print 'naw'
+			
 
- 
+			gridColIndex += 3;
+		gridRowIndex += 3;
+
+
+
+	# for solvedLine in possiblySolved:
+		# for solvedDigit in solvedLine:
+			# check each digit of each line to see if this possible solution has any errors
+			# check columns for > 1 of same digit, (rows should already be error-free byt design)
 
 
 
