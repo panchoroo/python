@@ -58,64 +58,101 @@ for p in puzzleList:
 		# print line;
 		possiblySolved.append(line);
 	# print possiblySolved;
-	possiblySolved=['123527689', 
-	'456365781', 
-	'789856479', 
-	'348152967', 
-	'712345698', 
-	'136748259', 
-	'132649578', 
-	'814253679', 
-	'245617389'];
+	# possiblySolved=['123456789', 
+	# '456789123', 
+	# '789123456', 
+	# '223456789', 
+	# '356789123', 
+	# '589123456', 
+	# '623456789', 
+	# '856789123', 
+	# '989123456'];
+
+	# possiblySolved=['123456789', 
+	# '456789123', 
+	# '789123456', 
+	# '234567891', 
+	# '567891234', 
+	# '891234567', 
+	# '345678912', 
+	# '678912345', 
+	# '912345678'];
 
 	def gridChecker(rowStart, colStart):
 		gridNums = '';
 		count = 0;
 		line = possiblySolved[rowStart];
+		colCount = 0;
+
 		while count < 9:
-			print line;
-			colCount = 0;
+			# print line, count;
 			if count == 3:
 				line = possiblySolved[rowStart+1];
 				colCount = 0;
 			elif count == 6: 
 				line = possiblySolved[rowStart+2];
 				colCount = 0;
+
 			digit = line[colStart+colCount];
 			if digit in gridNums:
-				print digit, gridNums;
-				# return False;
+				# print digit, gridNums;
+				return False;
 			else:
 				gridNums += digit;
 			count += 1;
 			colCount += 1;
-		print gridNums;
+		# print gridNums;
 		return True;
 
-		# 
-		# line2 = possiblySolved[rowStart+1];
-		# line3 = possiblySolved[rowStart+2];
-
-
-		# gridNums += line1[colStart];
-		# 	if line1[colStart+1] not in gridNums:
-		# 		gridNums += 
-
-
-
 	gridRowIndex = 0;
-	while gridRowIndex < 7:
+
+	foundErrorGrid = False
+	while gridRowIndex < 7 and not foundErrorGrid:
 		# check each 3x3 grid for numbers 1-9, no repeats
 		gridColIndex = 0;
 		while gridColIndex < 7:
-			if gridChecker (gridRowIndex, gridColIndex):
-				print 'yeah'
-			else:
-				print 'naw'
-			
-
+			if not gridChecker (gridRowIndex, gridColIndex):
+				foundErrorGrid = True;
 			gridColIndex += 3;
 		gridRowIndex += 3;
+	# print 'found error in grid'
+
+	# if no errors found in grids, check columns
+	foundErrorGrid = False;
+	if not foundErrorGrid:
+		foundErrorCol = False;
+		# print 'no errors'
+		colIndex = 0;
+		rowIndex = 0
+		while colIndex < 9 and not foundErrorCol:
+			colNums = '';
+			while rowIndex < 9 and not foundErrorCol:
+				print possiblySolved[rowIndex][colIndex];
+				if possiblySolved[rowIndex][colIndex] not in colNums:
+					colNums += possiblySolved[rowIndex][colIndex];
+				else: 
+					foundErrorCol = True;
+					# print 'nope'
+					break;
+				
+				rowIndex += 1;
+			colIndex += 1;
+			rowIndex = 0;
+
+	# foundErrorGrid = True;
+	if not foundErrorGrid and not foundErrorCol:
+		# add to actual solutions
+		print 'yay!'
+	else: 
+		print 'nerrrrp'
+
+	# once error has been found, shuffle the numbers
+	
+
+
+
+
+
 
 
 
@@ -123,13 +160,6 @@ for p in puzzleList:
 		# for solvedDigit in solvedLine:
 			# check each digit of each line to see if this possible solution has any errors
 			# check columns for > 1 of same digit, (rows should already be error-free byt design)
-
-
-
-
-
-
-
 
 # 	def getGrid(index):
 # 		firstGrid = [0,1,2];
