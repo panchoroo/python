@@ -152,7 +152,7 @@ for p in puzzleList:
 		print 'nerrrrp'
 		print totalErrors;
 
-	def mutationMaker(originalPuzzle, currentVersion):
+	def mutationMaker(originalPuzzle, currentVersion, errors):
 		# could make it have greater mutations based on number of errors?
 		# make mutations smaller as it gets closer
 		lineCount = 0;
@@ -166,12 +166,16 @@ for p in puzzleList:
 			if len(switchables) > 1:
 				# maybe dont need this?
 				for digit in currentVersion[lineCount]:
+					done = False;
 					if digit in originalPuzzle[lineCount]:
 						mutatedLine += digit;
-					else:
+					elif not done:
 						randomIndex = random.randint(0,len(switchables)-1)
 						mutatedLine += switchables[randomIndex];
 						switchables.remove(switchables[randomIndex]);
+						done = True;
+					else:
+						mutatedLine += digit;
 						# switchables = switchables[:switchables.index(randomIndex)] + switchables[switchables.index(randomIndex + 1):]
 				mutatedPuzzle.append(mutatedLine);
 			lineCount += 1;
@@ -182,35 +186,45 @@ for p in puzzleList:
 
 	# simulated annealing --> tabu: generate multiple versions with mutations and keep one with fewest errors
 	
-	def tabuMaker(possiblySolved):
+	def tabuMaker(possiblySolved, errors):
 		tabus = [];
 		tabuCount = 10;
 		while tabuCount > 0:
-			tabus.append(mutationMaker(workingPuzzle, possiblySolved));
+			tabus.append(mutationMaker(workingPuzzle, possiblySolved, errors));
 			tabuCount -= 1;
 
 		tabuErrors = [];
 		for t in tabus:
 			tabuErrors.append(checkAllErrors(t));
 
-		print sorted(tabuErrors)[0];
-		if sorted(tabuErrors)[0] == 0:
+		numErrors = sorted(tabuErrors)[0];
+		if numErrors == 0:
 			print '0 errors!'
 		# only accept mutations that DECREASE number of errors
 		# print tabuErrors;
 		# check if errors == 0?
 		bestMutation = tabus[tabuErrors.index(sorted(tabuErrors)[0])]; 
 		# print bestMutation;
-		return bestMutation
+		return [bestMutation, numErrors];
 
 	# mutationMaker()
 
 	mutations = 0;
-	newBest = tabuMaker(possiblySolved);
+	fewestErrors = 30;
+	tabu = tabuMaker(possiblySolved, fewestErrors);
+	newBest = tabu[0];
+	fewestErrors = tabu[1];
 
 	while mutations < 100:
-		newBest = tabuMaker(newBest);
-		print newBest;
+		tabu = tabuMaker(newBest, fewestErrors);
+		test = tabu[0];
+		testErrors = tabu[1];
+		if testErrors < fewestErrors:
+			fewestErrors = testErrors;
+			newBest = test;
+			print newBest;
+		else:
+			print 'too many errors'
 		mutations += 1;
 
 	# keep checking for errors until equals 0
@@ -218,7 +232,10 @@ for p in puzzleList:
 	# once error has been found, shuffle the numbers
 	
 
+# keep track of numbers that have been tested in spots?
+# use forced algorithm first and then stochastic?
 
+# for each puzzle, for reach row, indices that are free and which numbers can go in them
 
 
 
