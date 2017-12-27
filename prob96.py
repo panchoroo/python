@@ -177,14 +177,46 @@ for p in puzzleList:
  		# takes in row index and col index and returns all 20 peers of that square
  		peers = [];
  		# all in same row, all in same column, and grid
+ 		# no repeats
+ 		
+ 		index = 0
+ 		while index < 9:
+ 			if [row, index] not in peers and index != column:
+	 			peers.append([row, index]);
+	 		if [index, column] not in peers and index != row:
+		 		peers.append([index, column]);
+	 		index += 1;
+
+	 	def modifier(index):
+ 			mod1 = 1;
+ 			mod2 = 2;
+ 			if index == 1 or index == 4 or index == 7:
+	 			mod2 = -1;
+	 		elif index == 2 or index == 5 or index == 8:
+	 			mod1 = -1;
+	 			mod2 = -2;
+	 		return [mod1, mod2];
+	
+	 	rowMods = modifier(row);
+	 	colMods = modifier(column);
+	 	modifierRow1 = rowMods[0];
+ 		modifierRow2 = rowMods[1];
+ 		modifierCol1 = colMods[0];
+ 		modifierCol2 = colMods[1];
+ 		gridPeers = [[row, column+modifierCol1], [row, column+modifierCol2], [row+modifierRow1, column], [row+modifierRow1, column+modifierCol1], [row+modifierRow1, column+modifierCol2], [row+modifierRow2, column],  [row+modifierRow2, column+modifierCol1],  [row+modifierRow2, column+modifierCol2]];
+ 		for g in gridPeers:
+ 			if g not in peers:
+	 			peers.append(g);
+ 		# peers = set(peers);
+ 		# peers.remove([row, column]);
  		return peers;
 
- 	def singler(values, currentPuzzle):
+ 	# def singler(values, currentPuzzle):
  		# goes through values and finds squares that have only one possibility
  		# If a square has only one possible value, then eliminate that value from the square's peers. 
  		# get peers and eliminate
 
- 	def unitChecker():
+ 	# def unitChecker():
 		# If a unit has only one possible place for a value, then put the value there.
 		# check all units, place any values, then check singler or getPeers again?
 
@@ -197,7 +229,7 @@ for p in puzzleList:
 	#   			# possibleValues[rowIndex][colIndex] = workingPuzzle[rowIndex][colIndex];
 	#   		colIndex += 1;
  #  		rowIndex += 1;
-
+ 	print getPeers(1,1);
 
 	for line in workingPuzzle:
 		thisLineDigits = '';
