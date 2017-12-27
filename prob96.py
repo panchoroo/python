@@ -211,11 +211,27 @@ for p in puzzleList:
  		# peers.remove([row, column]);
  		return peers;
 
- 	# def singler(values, currentPuzzle):
+ 	def singler(values, currentPuzzle):
  		# goes through values and finds squares that have only one possibility
- 		# If a square has only one possible value, then eliminate that value from the square's peers. 
- 		# get peers and eliminate
-
+ 		rowIndex = 0;
+	  	while rowIndex < 9:
+	  		colIndex = 0;
+		  	while colIndex < 9:
+		  		if len(values[rowIndex][colIndex]) == 1:
+		  			# If a square has only one possible value, then eliminate that value from the square's peers.
+		  			onlyVal = values[rowIndex][colIndex];
+		  			if currentPuzzle[rowIndex][colIndex] == 0:
+		  				currentPuzzle[rowIndex][colIndex] = onlyVal;
+		  			peers = getPeers(rowIndex, colIndex);
+		  			for p in peers:
+		  				# print values[p[0]][p[1]];
+		  				peerVal = values[p[0]][p[1]];
+		  				# print ('p, p0', p, p[0]);
+		  				if onlyVal in peerVal:
+		  					values[p[0]][p[1]] = peerVal[:peerVal.index(onlyVal)] + peerVal[peerVal.index(onlyVal)+1:];
+		  		colIndex += 1;
+	  		rowIndex += 1;
+	  	return [values, currentPuzzle];
  	# def unitChecker():
 		# If a unit has only one possible place for a value, then put the value there.
 		# check all units, place any values, then check singler or getPeers again?
@@ -229,23 +245,24 @@ for p in puzzleList:
 	#   			# possibleValues[rowIndex][colIndex] = workingPuzzle[rowIndex][colIndex];
 	#   		colIndex += 1;
  #  		rowIndex += 1;
- 	print getPeers(1,1);
+ 	# print getPeers(1,1);
 
-	for line in workingPuzzle:
-		thisLineDigits = '';
-		for d in possibleDigits:
-			if d not in line:
-				thisLineDigits += d;
-		# print thisLineDigits;
-		for digit in line:
-			# print digit
-			if digit == '0':
-				line = line[:line.index(digit)] + thisLineDigits[startIndex] + line[line.index(digit)+1:]
-				# print line
-				# line[line.index(digit)] = ;
-				thisLineDigits = thisLineDigits[1:];
-		# print line;
-		possiblySolved.append(line);
+	# for line in workingPuzzle:
+	# 	thisLineDigits = '';
+	# 	for d in possibleDigits:
+	# 		if d not in line:
+	# 			thisLineDigits += d;
+	# 	# print thisLineDigits;
+	# 	for digit in line:
+	# 		# print digit
+	# 		if digit == '0':
+	# 			line = line[:line.index(digit)] + thisLineDigits[startIndex] + line[line.index(digit)+1:]
+	# 			# print line
+	# 			# line[line.index(digit)] = ;
+	# 			thisLineDigits = thisLineDigits[1:];
+	# 	# print line;
+	# 	possiblySolved.append(line);
+
 	# print possiblySolved;
 	# possiblySolved=['123456789', 
 	# '456789123', 
@@ -330,89 +347,126 @@ for p in puzzleList:
 		allErrors += colChecker();
 		return allErrors;
 
-	# while totalErrors > 0: 
-	totalErrors = checkAllErrors(possiblySolved);
-	if totalErrors == 0:
-		# add to actual solutions
-		print 'yay!'
-	else: 
-		print 'nerrrrp'
-		print totalErrors;
+	def threeStrategySolver(values, workingPuzzle):
+		# (1) If a square has only one possible value, then eliminate that value from the square's peers. 
+		# (2) If a unit has only one possible place for a value, then put the value there.
+		# (3) if no more squares can be filled in with 1 and 2, guess by trying one possibility out of 2, 
+		# check for errors and if that one doesn't work out, fix the other possibility
+		
+		# solved = False;
+		gotStuck = False;
 
-	def mutationMaker(originalPuzzle, currentVersion, errors):
-		# could make it have greater mutations based on number of errors?
-		# make mutations smaller as it gets closer
-		lineCount = 0;
-		switchables = [];
-		mutatedPuzzle = [];
-		while lineCount < 9:
-			mutatedLine = '';
-			for digit in currentVersion[lineCount]:
-				if digit not in originalPuzzle[lineCount]:
-					switchables.append(digit);
-			if len(switchables) > 1:
-				# maybe dont need this?
-				for digit in currentVersion[lineCount]:
-					done = False;
-					if digit in originalPuzzle[lineCount]:
-						mutatedLine += digit;
-					elif not done:
-						randomIndex = random.randint(0,len(switchables)-1)
-						mutatedLine += switchables[randomIndex];
-						switchables.remove(switchables[randomIndex]);
-						done = True;
-					else:
-						mutatedLine += digit;
-						# switchables = switchables[:switchables.index(randomIndex)] + switchables[switchables.index(randomIndex + 1):]
-				mutatedPuzzle.append(mutatedLine);
-			lineCount += 1;
-		# print 'returns?'
-		return mutatedPuzzle;
+		while gotStuck == False:
+			singled = singler(values, workingPuzzle);
+			values = singled[0];
+			newPuzzle = singled[1];
+			if newPuzzle == workingPuzzle:
+				gotStuck = True;
+			# elif checkAllErrors == 0;
 
-	# print mutationMaker(workingPuzzle, possiblySolved);
+			# 	gotStuck = True;
+			else:
+				workingPuzzle = newPuzzle;
 
-	# simulated annealing --> tabu: generate multiple versions with mutations and keep one with fewest errors
+		return [values, workingPuzzle];		
+		# print (possibleValues);
+
+		# while totalErrors > 0: 
+		# totalErrors = checkAllErrors(possiblySolved);
+		# if totalErrors == 0:
+		# 	# add to actual solutions
+		# 	print 'yay!'
+		# 	solved = True;
+		# 	# return values? or workingPuzzle?
+		# else: 
+		# 	print 'nerrrrp'
+		# 	print totalErrors;
+
+
+	print ('possiblySolved ', workingPuzzle);	
+	maybeSolved = threeStrategySolver(possibleValues, workingPuzzle);
+	possibleValues = maybeSolved[0];
+	workingPuzzle = maybeSolved[1];
+
+	print ('maybeSolved ', workingPuzzle);
+
+
+
+
+	# def mutationMaker(originalPuzzle, currentVersion, errors):
+	# 	# could make it have greater mutations based on number of errors?
+	# 	# make mutations smaller as it gets closer
+	# 	lineCount = 0;
+	# 	switchables = [];
+	# 	mutatedPuzzle = [];
+	# 	while lineCount < 9:
+	# 		mutatedLine = '';
+	# 		for digit in currentVersion[lineCount]:
+	# 			if digit not in originalPuzzle[lineCount]:
+	# 				switchables.append(digit);
+	# 		if len(switchables) > 1:
+	# 			# maybe dont need this?
+	# 			for digit in currentVersion[lineCount]:
+	# 				done = False;
+	# 				if digit in originalPuzzle[lineCount]:
+	# 					mutatedLine += digit;
+	# 				elif not done:
+	# 					randomIndex = random.randint(0,len(switchables)-1)
+	# 					mutatedLine += switchables[randomIndex];
+	# 					switchables.remove(switchables[randomIndex]);
+	# 					done = True;
+	# 				else:
+	# 					mutatedLine += digit;
+	# 					# switchables = switchables[:switchables.index(randomIndex)] + switchables[switchables.index(randomIndex + 1):]
+	# 			mutatedPuzzle.append(mutatedLine);
+	# 		lineCount += 1;
+	# 	# print 'returns?'
+	# 	return mutatedPuzzle;
+
+	# # print mutationMaker(workingPuzzle, possiblySolved);
+
+	# # simulated annealing --> tabu: generate multiple versions with mutations and keep one with fewest errors
 	
-	def tabuMaker(possiblySolved, errors):
-		tabus = [];
-		tabuCount = 10;
-		while tabuCount > 0:
-			tabus.append(mutationMaker(workingPuzzle, possiblySolved, errors));
-			tabuCount -= 1;
+	# def tabuMaker(possiblySolved, errors):
+	# 	tabus = [];
+	# 	tabuCount = 10;
+	# 	while tabuCount > 0:
+	# 		tabus.append(mutationMaker(workingPuzzle, possiblySolved, errors));
+	# 		tabuCount -= 1;
 
-		tabuErrors = [];
-		for t in tabus:
-			tabuErrors.append(checkAllErrors(t));
+	# 	tabuErrors = [];
+	# 	for t in tabus:
+	# 		tabuErrors.append(checkAllErrors(t));
 
-		numErrors = sorted(tabuErrors)[0];
-		if numErrors == 0:
-			print '0 errors!'
-		# only accept mutations that DECREASE number of errors
-		# print tabuErrors;
-		# check if errors == 0?
-		bestMutation = tabus[tabuErrors.index(sorted(tabuErrors)[0])]; 
-		# print bestMutation;
-		return [bestMutation, numErrors];
+	# 	numErrors = sorted(tabuErrors)[0];
+	# 	if numErrors == 0:
+	# 		print '0 errors!'
+	# 	# only accept mutations that DECREASE number of errors
+	# 	# print tabuErrors;
+	# 	# check if errors == 0?
+	# 	bestMutation = tabus[tabuErrors.index(sorted(tabuErrors)[0])]; 
+	# 	# print bestMutation;
+	# 	return [bestMutation, numErrors];
 
-	# mutationMaker()
+	# # mutationMaker()
 
-	mutations = 0;
-	fewestErrors = 30;
-	tabu = tabuMaker(possiblySolved, fewestErrors);
-	newBest = tabu[0];
-	fewestErrors = tabu[1];
+	# mutations = 0;
+	# fewestErrors = 30;
+	# tabu = tabuMaker(possiblySolved, fewestErrors);
+	# newBest = tabu[0];
+	# fewestErrors = tabu[1];
 
-	while mutations < 100:
-		tabu = tabuMaker(newBest, fewestErrors);
-		test = tabu[0];
-		testErrors = tabu[1];
-		if testErrors < fewestErrors:
-			fewestErrors = testErrors;
-			newBest = test;
-			print newBest;
-		# else:
-			# print 'too many errors'
-		mutations += 1;
+	# while mutations < 100:
+	# 	tabu = tabuMaker(newBest, fewestErrors);
+	# 	test = tabu[0];
+	# 	testErrors = tabu[1];
+	# 	if testErrors < fewestErrors:
+	# 		fewestErrors = testErrors;
+	# 		newBest = test;
+	# 		print newBest;
+	# 	# else:
+	# 		# print 'too many errors'
+	# 	mutations += 1;
 
 	# keep checking for errors until equals 0
 
