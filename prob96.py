@@ -9,6 +9,14 @@
 # By solving all fifty puzzles find the sum of the 3-digit numbers found in the top left corner of each solution 
 # grid; for example, 483 is the 3-digit number found in the top left corner of the solution grid above.
 
+
+# standard naming: columns 1-9, the rows A-I,  collection of nine squares (column, row, or box) a unit
+# and the squares that share a unit the peers
+
+# (1) If a square has only one possible value, then eliminate that value from the square's peers. 
+# (2) If a unit has only one possible place for a value, then put the value there.
+ # constraint propagation.
+
 import random;
 
 print 'derp'
@@ -42,6 +50,155 @@ for p in puzzleList:
 	workingPuzzle = p;
 	possiblySolved = [];
 	possibleDigits = '123456789';
+
+	# # readded old code to fill in some digits by logic method
+	# print workingPuzzle;
+	# def getGrid(index):
+ # 		firstGrid = [0,1,2];
+ # 		secondGrid = [3,4,5];
+ # 		thirdGrid = [6,7,8];
+ # 		if index in firstGrid:
+ # 			return firstGrid;
+ # 		elif index in secondGrid:
+ # 			return secondGrid;
+ # 		elif index in thirdGrid:
+ # 			return thirdGrid;
+ # 		else:
+ # 			print('something has gone terribly, terribly wrong');
+ 
+ # 	currentGrid = [0,1,2];
+ # 	checkIndex = 0;
+ 
+ # 	def rowDigitChecker(digit):
+ # 		noNew = True;
+ # 		def currentCheck(line):	
+ # 			return line.index(digit);
+
+ # 		def currentGridChecker(line, grid):			
+ # 			newGrid = grid;
+ # 			if workingPuzzle.index(line) not in grid:
+ # 				newGrid = getGrid(workingPuzzle.index(line));
+ # 			return newGrid;
+
+ # 		line = 0;
+ # 		currentGrid = getGrid(line);
+ 
+ # 		lineIndex = 0;
+ # 		while lineIndex < 7:
+ # 			workingLine = workingPuzzle[lineIndex]
+ # 			first = [digit in workingLine, 0];
+ # 			second = [digit in workingPuzzle[workingPuzzle.index(workingLine)+1], 1];
+ # 			third = [digit in workingPuzzle[workingPuzzle.index(workingLine)+2], 2];
+ # 			found = [first, second, third];
+ # 			successes = [f[1] for f in found if f[0]]
+ # 			# print ('successes', successes)
+ 
+ # 			if len(successes) == 2:
+ # 				line1 = workingPuzzle[workingPuzzle.index(workingLine)+successes[0]];
+ # 				index1 = line1.index(digit);
+ # 				grid1 = getGrid(index1);
+ 
+ # 				line2 = workingPuzzle[workingPuzzle.index(workingLine)+successes[1]];
+ # 				index2 = line1.index(digit);
+ # 				grid2 = getGrid(index2);
+ 
+ # 				if (0 in grid1 or 0 in grid2 and (3 in grid1 or 3 in grid2)):
+ # 					grid3 = [6,7,8];
+ # 				elif (0 in grid1 or 0 in grid2 and (6 in grid1 or 6 in grid2)):
+ # 					grid3 = [3,4,5];
+ # 				else:
+ # 					grid3 = [0,1,2];
+ 
+ # 				# print ('lines',workingPuzzle.index(line1), workingPuzzle.index(line2))
+ # 				if (successes[1] - successes[0] == 2):
+ # 					line3 = workingPuzzle[workingPuzzle.index(workingLine)+1];
+ # 				elif (workingPuzzle.index(line1) == 0 or workingPuzzle.index(line1) == 3 or workingPuzzle.index(line1) == 6):
+ # 					line3 = workingPuzzle[workingPuzzle.index(workingLine)+2];
+ # 				else:
+ # 					line3 = workingPuzzle[workingPuzzle.index(workingLine)];
+ # 				# print ('3s ', line3, grid3);
+ # 				zeroes = []
+ # 				for g in grid3:
+ # 					# print line3[g]
+ # 					# maybe filter grid3 somehow?
+ # 					if (str(line3[g]) == '0'):
+ # 						zeroes.append(g);
+ 						
+ # 				matches = [];
+ # 				for z in zeroes:
+ # 					# print ('z? ',z)
+ # 					for testLine in workingPuzzle:
+ # 						if testLine[z] == digit:
+ # 							zeroes.remove(z);
+ # 				if len(zeroes) == 1:
+ # 					# print 'YEAY'
+ # 					# print (line3, digit, zeroes[0])
+ # 					noNew = False;
+ 
+ # 					newLine = line3[:zeroes[0]] + str(digit) + line3[zeroes[0]+1:];
+ # 					# newLine[zeroes[0]] = str(digit);
+ # 					workingPuzzle[workingPuzzle.index(line3)] = newLine;
+  
+ # 			lineIndex += 3;
+ # 		return noNew;
+  
+  
+ # 	done = False;
+ # 	while not done:
+ # 		allDone = True;
+ # 	 	for digit in possibleDigits:
+ # 	 		if rowDigitChecker(digit) == False:
+ # 	 			allDone = False;
+ # 	 	if allDone == True:
+ # 	 		done = True;
+	print ('workingPuzzle before ', workingPuzzle);
+  	possibleValues = [['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789']];
+  	print possibleValues;
+  	rowIndex = 0;
+  	while rowIndex < 9:
+  		colIndex = 0;
+	  	while colIndex < 9:
+	  		# print workingPuzzle[rowIndex];
+	  		# print workingPuzzle[rowIndex][colIndex];
+	  		if workingPuzzle[rowIndex][colIndex] != '0':
+	  			# eliminate all but that value 
+	  			# print workingPuzzle[rowIndex][colIndex];
+	  			# print possibleValues[rowIndex][colIndex];
+	  			possibleValues[rowIndex][colIndex] = workingPuzzle[rowIndex][colIndex];
+	  		colIndex += 1;
+  		rowIndex += 1;
+
+ 	# rowDigitChecker(possibleDigits[0]);
+ 	print ('workingPuzzle after ', workingPuzzle);
+ 	print possibleValues;
+
+ 	# get peers and eliminate single choices from all peers
+ 	def getPeers(row, column):
+ 		# takes in row index and col index and returns all 20 peers of that square
+ 		peers = [];
+ 		# all in same row, all in same column, and grid
+ 		return peers;
+
+ 	def singler(values, currentPuzzle):
+ 		# goes through values and finds squares that have only one possibility
+ 		# If a square has only one possible value, then eliminate that value from the square's peers. 
+ 		# get peers and eliminate
+
+ 	def unitChecker():
+		# If a unit has only one possible place for a value, then put the value there.
+		# check all units, place any values, then check singler or getPeers again?
+
+	# rowIndex = 0;
+ #  	while rowIndex < 9:
+ #  		colIndex = 0;
+	#   	while colIndex < 9:
+	#   		# if workingPuzzle[rowIndex][colIndex] != '0':
+
+	#   			# possibleValues[rowIndex][colIndex] = workingPuzzle[rowIndex][colIndex];
+	#   		colIndex += 1;
+ #  		rowIndex += 1;
+
+
 	for line in workingPuzzle:
 		thisLineDigits = '';
 		for d in possibleDigits:
@@ -55,8 +212,6 @@ for p in puzzleList:
 				# print line
 				# line[line.index(digit)] = ;
 				thisLineDigits = thisLineDigits[1:];
-				# what happens when it finds an error?  maybe inc start index by 1? 
-				# or shuffle digits around? but dont let start digit end up in same place? 
 		# print line;
 		possiblySolved.append(line);
 	# print possiblySolved;
@@ -223,8 +378,8 @@ for p in puzzleList:
 			fewestErrors = testErrors;
 			newBest = test;
 			print newBest;
-		else:
-			print 'too many errors'
+		# else:
+			# print 'too many errors'
 		mutations += 1;
 
 	# keep checking for errors until equals 0
@@ -236,6 +391,9 @@ for p in puzzleList:
 # use forced algorithm first and then stochastic?
 
 # for each puzzle, for reach row, indices that are free and which numbers can go in them
+
+
+
 
 
 
