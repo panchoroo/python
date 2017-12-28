@@ -151,9 +151,9 @@ for p in puzzleList:
  # 	 			allDone = False;
  # 	 	if allDone == True:
  # 	 		done = True;
-	print ('workingPuzzle before ', workingPuzzle);
+	# print ('workingPuzzle before ', workingPuzzle);
   	possibleValues = [['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789']];
-  	print possibleValues;
+  	# print possibleValues;
   	rowIndex = 0;
   	while rowIndex < 9:
   		colIndex = 0;
@@ -169,8 +169,8 @@ for p in puzzleList:
   		rowIndex += 1;
 
  	# rowDigitChecker(possibleDigits[0]);
- 	print ('workingPuzzle after ', workingPuzzle);
- 	print possibleValues;
+ 	# print ('workingPuzzle after ', workingPuzzle);
+ 	# print possibleValues;
 
  	# get peers and eliminate single choices from all peers
  	def getPeers(row, column):
@@ -211,8 +211,9 @@ for p in puzzleList:
  		# peers.remove([row, column]);
  		return peers;
 
- 	def singler(values, currentPuzzle):
+ 	def singler(values):
  		# goes through values and finds squares that have only one possibility
+ 		changeMade = False;
  		rowIndex = 0;
 	  	while rowIndex < 9:
 	  		colIndex = 0;
@@ -220,8 +221,11 @@ for p in puzzleList:
 		  		if len(values[rowIndex][colIndex]) == 1:
 		  			# If a square has only one possible value, then eliminate that value from the square's peers.
 		  			onlyVal = values[rowIndex][colIndex];
-		  			if currentPuzzle[rowIndex][colIndex] == 0:
-		  				currentPuzzle[rowIndex][colIndex] = onlyVal;
+		  			# if currentPuzzle[rowIndex][colIndex] == '0':
+		  			# 	line = currentPuzzle[rowIndex];
+		  			# 	print line;
+		  			# 	line = line[:colIndex] + onlyVal + line[colIndex+1:];
+		  			# 	currentPuzzle[rowIndex] = line;
 		  			peers = getPeers(rowIndex, colIndex);
 		  			for p in peers:
 		  				# print values[p[0]][p[1]];
@@ -229,12 +233,32 @@ for p in puzzleList:
 		  				# print ('p, p0', p, p[0]);
 		  				if onlyVal in peerVal:
 		  					values[p[0]][p[1]] = peerVal[:peerVal.index(onlyVal)] + peerVal[peerVal.index(onlyVal)+1:];
+		  					changeMade = True;
 		  		colIndex += 1;
 	  		rowIndex += 1;
-	  	return [values, currentPuzzle];
- 	# def unitChecker():
+	  	return [values, changeMade];
+
+ 	def unitChecker(values):
 		# If a unit has only one possible place for a value, then put the value there.
 		# check all units, place any values, then check singler or getPeers again?
+		changeMade = False;
+		rowIndex = 0;
+		digits = '123456789';
+		while rowIndex < 9:
+		  	for d in digits:
+		  		digitCount = 0;
+		  		digitIndex = 0;
+		  		colIndex = 0;
+			  	while colIndex < 9:
+			  		if d in values[rowIndex][colIndex]:
+			  			digitCount += 1;
+			  			digitIndex = colIndex;
+			  		colIndex += 1;
+			  	if digitCount == 1 and len(values[rowIndex][digitIndex]) > 1:
+			  		values[rowIndex][digitIndex] = d;
+			  		changeMade = True;
+	  		rowIndex += 1;
+	  	return [values, changeMade];
 
 	# rowIndex = 0;
  #  	while rowIndex < 9:
@@ -347,28 +371,35 @@ for p in puzzleList:
 		allErrors += colChecker();
 		return allErrors;
 
-	def threeStrategySolver(values, workingPuzzle):
+	def threeStrategySolver(values):
 		# (1) If a square has only one possible value, then eliminate that value from the square's peers. 
 		# (2) If a unit has only one possible place for a value, then put the value there.
 		# (3) if no more squares can be filled in with 1 and 2, guess by trying one possibility out of 2, 
 		# check for errors and if that one doesn't work out, fix the other possibility
 		
 		# solved = False;
-		gotStuck = False;
+		notDone = True;
 
-		while gotStuck == False:
-			singled = singler(values, workingPuzzle);
+		while notDone:
+			print 'not stuck'
+			singled = singler(values);
 			values = singled[0];
-			newPuzzle = singled[1];
-			if newPuzzle == workingPuzzle:
-				gotStuck = True;
-			# elif checkAllErrors == 0;
-
+			notDone = singled[1];
+			# newPuzzle = singled[1];
+			# if newPuzzle == workingPuzzle:
 			# 	gotStuck = True;
-			else:
-				workingPuzzle = newPuzzle;
+			# else:
+			# 	workingPuzzle = newPuzzle;
 
-		return [values, workingPuzzle];		
+			# print values;
+			newValued = unitChecker(values);
+			values = newValued[0];
+			notDone = newValued[1];
+
+			# print ('newValues ', values);
+
+		return values;		
+
 		# print (possibleValues);
 
 		# while totalErrors > 0: 
@@ -383,15 +414,22 @@ for p in puzzleList:
 		# 	print totalErrors;
 
 
-	print ('possiblySolved ', workingPuzzle);	
-	maybeSolved = threeStrategySolver(possibleValues, workingPuzzle);
-	possibleValues = maybeSolved[0];
-	workingPuzzle = maybeSolved[1];
-
-	print ('maybeSolved ', workingPuzzle);
 
 
+	# print ('possiblySolved ', workingPuzzle);	
+	# print possibleValues;
+	maybeSolved = threeStrategySolver(possibleValues);
+	# possibleValues = maybeSolved;
+	# notDone = maybeSolved[1];
 
+	# print ('maybeSolved ', workingPuzzle);
+	# print possibleValues;
+	solution = [];
+	for m in maybeSolved:
+		solution.append(''.join(m));
+
+	print ('solution', solution);
+	print checkAllErrors(solution)
 
 	# def mutationMaker(originalPuzzle, currentVersion, errors):
 	# 	# could make it have greater mutations based on number of errors?
