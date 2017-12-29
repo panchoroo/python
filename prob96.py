@@ -22,136 +22,38 @@ import random;
 print 'derp'
 sudokuText= "p096_sudoku.txt"
 def loadSuccesses():
-	inFile = open(sudokuText, 'r')
-	line = inFile.readline()
-	sudokuList = []
+	inFile = open(sudokuText, 'r');
+	line = inFile.readline();
+	sudokuList = [];
 	while line:
 		if line[0] == 'G':
 			newPuzzle = [];
 			count = 0;
 		if count > 0:
 			newPuzzle.append(line[:9]);
-		count += 1
+		count += 1;
 		if count >= 8:
-			sudokuList.append(newPuzzle);
-		line = inFile.readline()
-	inFile.close()
-	return sudokuList
+			if newPuzzle not in sudokuList:
+				sudokuList.append(newPuzzle);
+		line = inFile.readline();
+	inFile.close();
+	return sudokuList;
 
-# puzzleList = loadSuccesses()
+puzzleList = loadSuccesses();
 # when it works, load all 50 puzzles, for now, just the first one
-puzzleList = [['003020600', '900305001', '001806400', '008102900', '700000008', '006708200', '002609500', '800203009', '005010300']];
+# puzzleList = [['003020600', '900305001', '001806400', '008102900', '700000008', '006708200', '002609500', '800203009', '005010300']];
 # print puzzleList;
 
+puzzleCount = 1;
 solutionsList = [];
 for p in puzzleList:
+	print ('puzzle number ', puzzleCount);
+	puzzleCount += 1;
 	# iterate through each puzzle from the text file
 	startIndex = 0;
 	workingPuzzle = p;
 	possiblySolved = [];
-	possibleDigits = '123456789';
-
-	# # readded old code to fill in some digits by logic method
-	# print workingPuzzle;
-	# def getGrid(index):
- # 		firstGrid = [0,1,2];
- # 		secondGrid = [3,4,5];
- # 		thirdGrid = [6,7,8];
- # 		if index in firstGrid:
- # 			return firstGrid;
- # 		elif index in secondGrid:
- # 			return secondGrid;
- # 		elif index in thirdGrid:
- # 			return thirdGrid;
- # 		else:
- # 			print('something has gone terribly, terribly wrong');
- 
- # 	currentGrid = [0,1,2];
- # 	checkIndex = 0;
- 
- # 	def rowDigitChecker(digit):
- # 		noNew = True;
- # 		def currentCheck(line):	
- # 			return line.index(digit);
-
- # 		def currentGridChecker(line, grid):			
- # 			newGrid = grid;
- # 			if workingPuzzle.index(line) not in grid:
- # 				newGrid = getGrid(workingPuzzle.index(line));
- # 			return newGrid;
-
- # 		line = 0;
- # 		currentGrid = getGrid(line);
- 
- # 		lineIndex = 0;
- # 		while lineIndex < 7:
- # 			workingLine = workingPuzzle[lineIndex]
- # 			first = [digit in workingLine, 0];
- # 			second = [digit in workingPuzzle[workingPuzzle.index(workingLine)+1], 1];
- # 			third = [digit in workingPuzzle[workingPuzzle.index(workingLine)+2], 2];
- # 			found = [first, second, third];
- # 			successes = [f[1] for f in found if f[0]]
- # 			# print ('successes', successes)
- 
- # 			if len(successes) == 2:
- # 				line1 = workingPuzzle[workingPuzzle.index(workingLine)+successes[0]];
- # 				index1 = line1.index(digit);
- # 				grid1 = getGrid(index1);
- 
- # 				line2 = workingPuzzle[workingPuzzle.index(workingLine)+successes[1]];
- # 				index2 = line1.index(digit);
- # 				grid2 = getGrid(index2);
- 
- # 				if (0 in grid1 or 0 in grid2 and (3 in grid1 or 3 in grid2)):
- # 					grid3 = [6,7,8];
- # 				elif (0 in grid1 or 0 in grid2 and (6 in grid1 or 6 in grid2)):
- # 					grid3 = [3,4,5];
- # 				else:
- # 					grid3 = [0,1,2];
- 
- # 				# print ('lines',workingPuzzle.index(line1), workingPuzzle.index(line2))
- # 				if (successes[1] - successes[0] == 2):
- # 					line3 = workingPuzzle[workingPuzzle.index(workingLine)+1];
- # 				elif (workingPuzzle.index(line1) == 0 or workingPuzzle.index(line1) == 3 or workingPuzzle.index(line1) == 6):
- # 					line3 = workingPuzzle[workingPuzzle.index(workingLine)+2];
- # 				else:
- # 					line3 = workingPuzzle[workingPuzzle.index(workingLine)];
- # 				# print ('3s ', line3, grid3);
- # 				zeroes = []
- # 				for g in grid3:
- # 					# print line3[g]
- # 					# maybe filter grid3 somehow?
- # 					if (str(line3[g]) == '0'):
- # 						zeroes.append(g);
- 						
- # 				matches = [];
- # 				for z in zeroes:
- # 					# print ('z? ',z)
- # 					for testLine in workingPuzzle:
- # 						if testLine[z] == digit:
- # 							zeroes.remove(z);
- # 				if len(zeroes) == 1:
- # 					# print 'YEAY'
- # 					# print (line3, digit, zeroes[0])
- # 					noNew = False;
- 
- # 					newLine = line3[:zeroes[0]] + str(digit) + line3[zeroes[0]+1:];
- # 					# newLine[zeroes[0]] = str(digit);
- # 					workingPuzzle[workingPuzzle.index(line3)] = newLine;
-  
- # 			lineIndex += 3;
- # 		return noNew;
-  
-  
- # 	done = False;
- # 	while not done:
- # 		allDone = True;
- # 	 	for digit in possibleDigits:
- # 	 		if rowDigitChecker(digit) == False:
- # 	 			allDone = False;
- # 	 	if allDone == True:
- # 	 		done = True;
-	# print ('workingPuzzle before ', workingPuzzle);
+	possibleDigits = '123456789'
   	possibleValues = [['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789'], ['123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789', '123456789']];
   	# print possibleValues;
   	rowIndex = 0;
@@ -167,10 +69,6 @@ for p in puzzleList:
 	  			possibleValues[rowIndex][colIndex] = workingPuzzle[rowIndex][colIndex];
 	  		colIndex += 1;
   		rowIndex += 1;
-
- 	# rowDigitChecker(possibleDigits[0]);
- 	# print ('workingPuzzle after ', workingPuzzle);
- 	# print possibleValues;
 
  	# get peers and eliminate single choices from all peers
  	def getPeers(row, column):
@@ -203,13 +101,12 @@ for p in puzzleList:
  		modifierRow2 = rowMods[1];
  		modifierCol1 = colMods[0];
  		modifierCol2 = colMods[1];
+
  		gridPeers = [[row, column+modifierCol1], [row, column+modifierCol2], [row+modifierRow1, column], [row+modifierRow1, column+modifierCol1], [row+modifierRow1, column+modifierCol2], [row+modifierRow2, column],  [row+modifierRow2, column+modifierCol1],  [row+modifierRow2, column+modifierCol2]];
  		for g in gridPeers:
  			if g not in peers:
 	 			peers.append(g);
- 		# peers = set(peers);
- 		# peers.remove([row, column]);
- 		return peers;
+ 		return [peers, gridPeers];
 
  	def singler(values):
  		# goes through values and finds squares that have only one possibility
@@ -219,18 +116,13 @@ for p in puzzleList:
 	  		colIndex = 0;
 		  	while colIndex < 9:
 		  		if len(values[rowIndex][colIndex]) == 1:
-		  			# If a square has only one possible value, then eliminate that value from the square's peers.
+		  			# If a square has only one possible value, 
+		  			# then eliminate that value from the square's peers.
 		  			onlyVal = values[rowIndex][colIndex];
-		  			# if currentPuzzle[rowIndex][colIndex] == '0':
-		  			# 	line = currentPuzzle[rowIndex];
-		  			# 	print line;
-		  			# 	line = line[:colIndex] + onlyVal + line[colIndex+1:];
-		  			# 	currentPuzzle[rowIndex] = line;
-		  			peers = getPeers(rowIndex, colIndex);
+		  			peersGotten = getPeers(rowIndex, colIndex);
+		  			peers = peersGotten[0];
 		  			for p in peers:
-		  				# print values[p[0]][p[1]];
 		  				peerVal = values[p[0]][p[1]];
-		  				# print ('p, p0', p, p[0]);
 		  				if onlyVal in peerVal:
 		  					values[p[0]][p[1]] = peerVal[:peerVal.index(onlyVal)] + peerVal[peerVal.index(onlyVal)+1:];
 		  					changeMade = True;
@@ -240,77 +132,83 @@ for p in puzzleList:
 
  	def unitChecker(values):
 		# If a unit has only one possible place for a value, then put the value there.
-		# check all units, place any values, then check singler or getPeers again?
 		changeMade = False;
 		rowIndex = 0;
 		digits = '123456789';
+		# print ('values', values)
 		while rowIndex < 9:
 		  	for d in digits:
 		  		digitCount = 0;
 		  		digitIndex = 0;
+		  		digitCountCol = 0;
+		  		digitIndexCol = 0;
 		  		colIndex = 0;
 			  	while colIndex < 9:
 			  		if d in values[rowIndex][colIndex]:
 			  			digitCount += 1;
 			  			digitIndex = colIndex;
+			  		if d in values[colIndex][rowIndex]:
+			  			digitCountCol += 1;
+			  			digitIndexCol = colIndex;
 			  		colIndex += 1;
 			  	if digitCount == 1 and len(values[rowIndex][digitIndex]) > 1:
 			  		values[rowIndex][digitIndex] = d;
 			  		changeMade = True;
+			  	if digitCountCol == 1 and len(values[digitIndexCol][rowIndex]) > 1:		  		
+			  		# print ('values at pt and d', values[digitIndexCol][rowIndex], d);
+			  		# print (rowIndex, digitIndexCol, colIndex)
+			  		values[digitIndexCol][rowIndex] = d;
+			  		changeMade = True;
 	  		rowIndex += 1;
+
+	  	gridCheck = 0;
+	  	while gridCheck < 7:
+		  	peersGotten = getPeers(gridCheck,gridCheck);
+		  	gridPeers = peersGotten[1];
+		  	gridPeers.append([gridCheck, gridCheck]);
+		  	# print ('gridPeers', gridPeers);
+		  	# if d in values[]
+		  	
+		  	for d in digits:
+		  		digitCount = 0;
+		  		pVal = 0;
+		  		# print ('d', d);
+		  		for p in gridPeers:
+		  			peerVal = values[p[0]][p[1]];
+		  			# print ('peerVal', peerVal);
+		  			if d in peerVal:
+				  		# print ('peerval', peerVal, d);
+				  		digitCount += 1;
+			  			pVal = p;
+			  	if digitCount == 1 and len(values[pVal[0]][pVal[1]]) > 1:
+		  			values[pVal[0]][pVal[1]] = d;
+			  		changeMade = True;
+
+		  	gridCheck += 3;
+
+
+	  	# colIndex = 0;
+	  	# while colIndex < 9:
+		  # 	for d in digits:
+		  # 		digitCount = 0;
+		  # 		digitIndex = 0;
+		  # 		rowIndex = 0;
+			 #  	while rowIndex < 9:
+			 #  		if d in values[rowIndex][colIndex]:
+			 #  			digitCount += 1;
+			 #  			digitIndex = colIndex;
+			 #  		colIndex += 1;
+			 #  	if digitCount == 1 and len(values[rowIndex][digitIndex]) > 1:
+			 #  		values[rowIndex][digitIndex] = d;
+			 #  		changeMade = True;
+	  	# 	rowIndex += 1;
+
+
+
 	  	return [values, changeMade];
 
-	# rowIndex = 0;
- #  	while rowIndex < 9:
- #  		colIndex = 0;
-	#   	while colIndex < 9:
-	#   		# if workingPuzzle[rowIndex][colIndex] != '0':
-
-	#   			# possibleValues[rowIndex][colIndex] = workingPuzzle[rowIndex][colIndex];
-	#   		colIndex += 1;
- #  		rowIndex += 1;
- 	# print getPeers(1,1);
-
-	# for line in workingPuzzle:
-	# 	thisLineDigits = '';
-	# 	for d in possibleDigits:
-	# 		if d not in line:
-	# 			thisLineDigits += d;
-	# 	# print thisLineDigits;
-	# 	for digit in line:
-	# 		# print digit
-	# 		if digit == '0':
-	# 			line = line[:line.index(digit)] + thisLineDigits[startIndex] + line[line.index(digit)+1:]
-	# 			# print line
-	# 			# line[line.index(digit)] = ;
-	# 			thisLineDigits = thisLineDigits[1:];
-	# 	# print line;
-	# 	possiblySolved.append(line);
-
-	# print possiblySolved;
-	# possiblySolved=['123456789', 
-	# '456789123', 
-	# '789123456', 
-	# '223456789', 
-	# '356789123', 
-	# '589123456', 
-	# '623456789', 
-	# '856789123', 
-	# '989123456'];
-
-	# test solution 
-	# possiblySolved=['123456789', 
-	# '456789123', 
-	# '789123456', 
-	# '234567891', 
-	# '567891234', 
-	# '891234567', 
-	# '345678912', 
-	# '678912345', 
-	# '912345678'];
-
 	def checkAllErrors(possibleSolution):
-
+		# checks grids and columns, rows are error free by design
 		def gridChecker(rowStart, colStart):
 			gridNums = '';
 			count = 0;
@@ -351,12 +249,10 @@ for p in puzzleList:
 					else: 
 						errors += 1;
 						# print 'nope'
-					
 					rowIndex += 1;
 				colIndex += 1;
 				rowIndex = 0;
 			return errors;
-
 
 		gridRowIndex = 0;
 		allErrors = 0;
@@ -381,7 +277,7 @@ for p in puzzleList:
 		notDone = True;
 
 		while notDone:
-			print 'not stuck'
+			# print 'not stuck'
 			singled = singler(values);
 			values = singled[0];
 			notDone = singled[1];
@@ -412,110 +308,43 @@ for p in puzzleList:
 		# else: 
 		# 	print 'nerrrrp'
 		# 	print totalErrors;
+	def solutionChecker(values):
+		solved = True;
+		solution = [];
+		index = 0;
+		while index < 9:
+			line = ''.join(values[index]);
+			if len(line) > 9:
+				# randomGuess(maybeSolved);
+				print ('index', index);
+				solved = False;
+				break;
+			else: 
+				solution.append(line);
+			index += 1;
 
+		# print ('solution', solution);
+		# if checkAllErrors(solution) == 0:
+		if solved:
+			return [solution, solved];
+		
+			# maybe return place where it failed?
+		return [index, solved];
 
+	def randomGuess(index):
+		print ('random guess index', index);
 
+		
 
-	# print ('possiblySolved ', workingPuzzle);	
-	# print possibleValues;
-	maybeSolved = threeStrategySolver(possibleValues);
-	# possibleValues = maybeSolved;
-	# notDone = maybeSolved[1];
+	threeStrategied = threeStrategySolver(possibleValues);
+	maybeSolved = solutionChecker(threeStrategied);
+	if maybeSolved[1]:
+		print maybeSolved[0];
+		solutionsList.append(maybeSolved[0]);
 
-	# print ('maybeSolved ', workingPuzzle);
-	# print possibleValues;
-	solution = [];
-	for m in maybeSolved:
-		solution.append(''.join(m));
-
-	print ('solution', solution);
-	print checkAllErrors(solution)
-
-	# def mutationMaker(originalPuzzle, currentVersion, errors):
-	# 	# could make it have greater mutations based on number of errors?
-	# 	# make mutations smaller as it gets closer
-	# 	lineCount = 0;
-	# 	switchables = [];
-	# 	mutatedPuzzle = [];
-	# 	while lineCount < 9:
-	# 		mutatedLine = '';
-	# 		for digit in currentVersion[lineCount]:
-	# 			if digit not in originalPuzzle[lineCount]:
-	# 				switchables.append(digit);
-	# 		if len(switchables) > 1:
-	# 			# maybe dont need this?
-	# 			for digit in currentVersion[lineCount]:
-	# 				done = False;
-	# 				if digit in originalPuzzle[lineCount]:
-	# 					mutatedLine += digit;
-	# 				elif not done:
-	# 					randomIndex = random.randint(0,len(switchables)-1)
-	# 					mutatedLine += switchables[randomIndex];
-	# 					switchables.remove(switchables[randomIndex]);
-	# 					done = True;
-	# 				else:
-	# 					mutatedLine += digit;
-	# 					# switchables = switchables[:switchables.index(randomIndex)] + switchables[switchables.index(randomIndex + 1):]
-	# 			mutatedPuzzle.append(mutatedLine);
-	# 		lineCount += 1;
-	# 	# print 'returns?'
-	# 	return mutatedPuzzle;
-
-	# # print mutationMaker(workingPuzzle, possiblySolved);
-
-	# # simulated annealing --> tabu: generate multiple versions with mutations and keep one with fewest errors
-	
-	# def tabuMaker(possiblySolved, errors):
-	# 	tabus = [];
-	# 	tabuCount = 10;
-	# 	while tabuCount > 0:
-	# 		tabus.append(mutationMaker(workingPuzzle, possiblySolved, errors));
-	# 		tabuCount -= 1;
-
-	# 	tabuErrors = [];
-	# 	for t in tabus:
-	# 		tabuErrors.append(checkAllErrors(t));
-
-	# 	numErrors = sorted(tabuErrors)[0];
-	# 	if numErrors == 0:
-	# 		print '0 errors!'
-	# 	# only accept mutations that DECREASE number of errors
-	# 	# print tabuErrors;
-	# 	# check if errors == 0?
-	# 	bestMutation = tabus[tabuErrors.index(sorted(tabuErrors)[0])]; 
-	# 	# print bestMutation;
-	# 	return [bestMutation, numErrors];
-
-	# # mutationMaker()
-
-	# mutations = 0;
-	# fewestErrors = 30;
-	# tabu = tabuMaker(possiblySolved, fewestErrors);
-	# newBest = tabu[0];
-	# fewestErrors = tabu[1];
-
-	# while mutations < 100:
-	# 	tabu = tabuMaker(newBest, fewestErrors);
-	# 	test = tabu[0];
-	# 	testErrors = tabu[1];
-	# 	if testErrors < fewestErrors:
-	# 		fewestErrors = testErrors;
-	# 		newBest = test;
-	# 		print newBest;
-	# 	# else:
-	# 		# print 'too many errors'
-	# 	mutations += 1;
-
-	# keep checking for errors until equals 0
-
-	# once error has been found, shuffle the numbers
-	
-
-# keep track of numbers that have been tested in spots?
-# use forced algorithm first and then stochastic?
-
-# for each puzzle, for reach row, indices that are free and which numbers can go in them
-
+	else: 
+		print 'guessing!'
+		randomGuess(maybeSolved[0]);
 
 
 
