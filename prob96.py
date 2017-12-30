@@ -15,13 +15,144 @@
 
 # (1) If a square has only one possible value, then eliminate that value from the square's peers. 
 # (2) If a unit has only one possible place for a value, then put the value there.
- # constraint propagation.
+# constraint propagation.
 
-import random;
+ROWS = [[(r, c) for c in range(9)] for r in range(9)]
+COLUMNS = [[(r, c) for r in range(9)] for c in range(9)]
+COORDS = [(r,c) for r in range(9) for c in range(9)]
+BOXES = [[]*9]
+print ('BOXES', BOXES)
+for r,c in COORDS:
+	if r < 3 and c < 3:
+		BOXES[0].append((r,c))
+	elif r < 3 and c < 6:
+		BOXES[1].append((r,c))
+	elif r < 3:
+		BOXES[2].append((r,c))
+	elif r < 6 and c < 3:
+		BOXES[3].append((r,c))
+	elif r < 6 and c < 6:
+		BOXES[4].append((r,c))
+	elif r < 6:
+		BOXES[5].append((r,c))
+	elif c < 3:
+		BOXES[6].append((r,c))
+	elif c < 6:
+		BOXES[7].append((r,c))
+	else:
+		BOXES[8].append((r,c))
 
-print 'derp'
-sudokuText= "p096_sudoku.txt"
-def loadSuccesses():
+
+def solve(puzzle):
+	while solved(puzzle) == False:
+		# if error(puzzle):
+		# 	print 'u done fucked up'
+		# 	return False
+
+		eliminated = eliminateFromPeers(puzzle)
+		if eliminated:
+			peersChanged = eliminated[1]
+			unitChecked = unitChecker(eliminated[0])
+			if unitChecked:
+				puzzle, unitChanged = unitChecked;
+			else: 
+				return False
+		else:
+			return False
+
+		if not peersChanged and not unitChanged:
+			guesses = makeGuesses(puzzle)
+			for g in guesses:
+				solution = solve(g)
+				if not solution:
+					return solution
+	return solution
+
+def solved(puzzle):
+	# checking to see if there is only one possible value for each square in the 9x9 grid
+	return all([len(square) == 1 for square in puzzle])
+
+# def error(puzzle):
+	# check for any errors in current puzzle
+
+def eliminateFromPeers(puzzle):
+	# goes through values and finds squares that have only one possibility and eliminates that value from all other peers
+	changeMade = False
+
+	for coord in puzzle:
+		if len(puzzle[coord]) == 1:
+			for peer in getPeers(puzzle, coord):
+			# If a square has only one possible value, 
+  			# then eliminate that value from the square's peers.
+  				if puzzle[coord] in puzzle[peer]:
+					puzzle[peer] = puzzle[peer].replace(puzzle[coord], '')
+					changeMade = True
+					if len(puzzle[peer]) < 1:
+						return False
+ 	return (puzzle, changeMade)
+
+def unitChecker(puzzle):
+	# If a unit has only one possible place for a value, then put the value there.
+	changeMade = False;
+	digits = '123456789';
+	for d in digits:
+		puzzle, changeMade1 = solidarityChecker(d, puzzle, ROWS)
+		puzzle, changeMade2 = solidarityChecker(d, puzzle, COLUMNS)
+		puzzle, changeMade3 = solidarityChecker(d, puzzle, BOXES)
+		if changeMade1 or changeMade2 or changeMade3:
+			changeMade = True
+
+def makeGuesses(puzzle):
+	guesses = [];
+	guess = [];
+	for row in ROWS:
+		for r in row:
+			if len(puzzle[r]) > 1:
+				guess = [p for p in puzzle]
+				for i in range(len(puzzle[r])):
+					guess[r] = puzzle[r][i]
+					guesses.append(guess)
+				return guesses;
+				break;
+	return guesses
+
+
+def getPeers(coord):
+	# takes a coord and gets all peers (i.e set of coords in row, column and box)
+	row = getRow(coord)
+	column = getColumn(coord)
+	box = getBox(coord)
+	return set(row + column + box)
+
+def getRow(coord):
+	return ROWS[coord[0]]
+
+def getColumn(coord):
+	return COLUMNS[coord[1]]
+
+def getBox(coord):
+	for box in BOXES:
+		if coord in box:
+			return box
+	return 'ERROR: no box found for coordinate'
+ 
+def solidarityChecker(digit, puzzle, coords):
+	for unit in coords:
+		digitCount = 0;
+  		digitCoord = 0;
+		for coord in coords:
+			if digit in puzzle[coord]:
+				digitCount += 1;
+  			digitCoord = coord;
+	  	if digitCount == 1 and len(puzzle[digitCoord]) > 1:
+	  		puzzle[digitCoord] = digit;
+	  		changeMade = True;
+	return [puzzle, changeMade];
+
+
+
+
+def loadSudokus():
 	inFile = open(sudokuText, 'r');
 	line = inFile.readline();
 	sudokuList = [];
@@ -39,17 +170,31 @@ def loadSuccesses():
 	inFile.close();
 	return sudokuList;
 
-puzzleList = loadSuccesses();
-# when it works, load all 50 puzzles, for now, just the first one
-# puzzleList = [['003020600', '900305001', '001806400', '008102900', '700000008', '006708200', '002609500', '800203009', '005010300']];
-# print puzzleList;
+def formatPuzzle(filePuzzle):
+	puzzle = {};
+	# possibleValues = '123456789'
+	rowCount = 0;
+	for row in filePuzzle:
+		colCount = 0;
+		for col in row:
+			# puzzle.append();
+			if filePuzzle[rowCount][colCount] == 0:
+				puzzle[(rowCount, colCount)] = '123456789';
+			else:
+				puzzle[(rowCount, colCount)] = filePuzzle[rowCount][colCount];
+			colCount += 1;
+		rowCount += 1;
+	print ('puzzle', puzzle);
+	return puzzle;
 
-puzzleCount = 1;
-solutionsList = [];
+
+
+
+
+
 for p in puzzleList:
 	# print ('puzzle number ', puzzleCount);
 	puzzleCount += 1;
-	# iterate through each puzzle from the text file
 	startIndex = 0;
 	workingPuzzle = p;
 	possiblySolved = [];
@@ -109,7 +254,7 @@ for p in puzzleList:
  		return [peers, gridPeers];
 
  	def singler(values):
- 		# goes through values and finds squares that have only one possibility
+ 		# goes through values and finds squares that have only one possibility and eliminates that value from all other peers
  		changeMade = False;
  		noErrors = False;
  		rowIndex = 0;
@@ -344,9 +489,21 @@ for p in puzzleList:
 					# values[rowIndex][colIndex] = otherGuess;
 
 
-	checkSolution(possibleValues);
+	# checkSolution(possibleValues);
+
+# def main:
+# 	loadSudokus(s)
+# 	for p in 
 
 
-
-
+if __name__ == '__main__':
+	# def getSolutions(puzzleList):
+	puzzleList = loadSudokus('p096_sudoku.txt');
+	solutionsList = [];
+	for p in puzzleList:
+		puzzleDict = formatPuzzle(p);
+		solved = solve(puzzleDict);
+		# if solved:
+		solutionsList.append(solved);
+	print solutionsList;
 
