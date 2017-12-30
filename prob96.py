@@ -47,7 +47,7 @@ puzzleList = loadSuccesses();
 puzzleCount = 1;
 solutionsList = [];
 for p in puzzleList:
-	print ('puzzle number ', puzzleCount);
+	# print ('puzzle number ', puzzleCount);
 	puzzleCount += 1;
 	# iterate through each puzzle from the text file
 	startIndex = 0;
@@ -111,6 +111,7 @@ for p in puzzleList:
  	def singler(values):
  		# goes through values and finds squares that have only one possibility
  		changeMade = False;
+ 		noErrors = False;
  		rowIndex = 0;
 	  	while rowIndex < 9:
 	  		colIndex = 0;
@@ -125,17 +126,18 @@ for p in puzzleList:
 		  				peerVal = values[p[0]][p[1]];
 		  				if onlyVal in peerVal:
 		  					values[p[0]][p[1]] = peerVal[:peerVal.index(onlyVal)] + peerVal[peerVal.index(onlyVal)+1:];
+		  					if len(values[p[0]][p[1]]) < 1:
+		  						noErrors = False;
 		  					changeMade = True;
 		  		colIndex += 1;
 	  		rowIndex += 1;
-	  	return [values, changeMade];
+	  	return [values, changeMade, noErrors];
 
  	def unitChecker(values):
 		# If a unit has only one possible place for a value, then put the value there.
 		changeMade = False;
 		rowIndex = 0;
 		digits = '123456789';
-		# print ('values', values)
 		while rowIndex < 9:
 		  	for d in digits:
 		  		digitCount = 0;
@@ -154,9 +156,7 @@ for p in puzzleList:
 			  	if digitCount == 1 and len(values[rowIndex][digitIndex]) > 1:
 			  		values[rowIndex][digitIndex] = d;
 			  		changeMade = True;
-			  	if digitCountCol == 1 and len(values[digitIndexCol][rowIndex]) > 1:		  		
-			  		# print ('values at pt and d', values[digitIndexCol][rowIndex], d);
-			  		# print (rowIndex, digitIndexCol, colIndex)
+			  	if digitCountCol == 1 and len(values[digitIndexCol][rowIndex]) > 1:	
 			  		values[digitIndexCol][rowIndex] = d;
 			  		changeMade = True;
 	  		rowIndex += 1;
@@ -166,44 +166,19 @@ for p in puzzleList:
 		  	peersGotten = getPeers(gridCheck,gridCheck);
 		  	gridPeers = peersGotten[1];
 		  	gridPeers.append([gridCheck, gridCheck]);
-		  	# print ('gridPeers', gridPeers);
-		  	# if d in values[]
 		  	
 		  	for d in digits:
 		  		digitCount = 0;
 		  		pVal = 0;
-		  		# print ('d', d);
 		  		for p in gridPeers:
 		  			peerVal = values[p[0]][p[1]];
-		  			# print ('peerVal', peerVal);
 		  			if d in peerVal:
-				  		# print ('peerval', peerVal, d);
 				  		digitCount += 1;
 			  			pVal = p;
 			  	if digitCount == 1 and len(values[pVal[0]][pVal[1]]) > 1:
 		  			values[pVal[0]][pVal[1]] = d;
 			  		changeMade = True;
-
 		  	gridCheck += 3;
-
-
-	  	# colIndex = 0;
-	  	# while colIndex < 9:
-		  # 	for d in digits:
-		  # 		digitCount = 0;
-		  # 		digitIndex = 0;
-		  # 		rowIndex = 0;
-			 #  	while rowIndex < 9:
-			 #  		if d in values[rowIndex][colIndex]:
-			 #  			digitCount += 1;
-			 #  			digitIndex = colIndex;
-			 #  		colIndex += 1;
-			 #  	if digitCount == 1 and len(values[rowIndex][digitIndex]) > 1:
-			 #  		values[rowIndex][digitIndex] = d;
-			 #  		changeMade = True;
-	  	# 	rowIndex += 1;
-
-
 
 	  	return [values, changeMade];
 
@@ -217,7 +192,6 @@ for p in puzzleList:
 			errors = 0;
 
 			while count < 9:
-				# print line, count;
 				if count == 3:
 					line = possibleSolution[rowStart+1];
 					colCount = 0;
@@ -227,13 +201,11 @@ for p in puzzleList:
 
 				digit = line[colStart+colCount];
 				if digit in gridNums:
-					# print digit, gridNums;
 					errors += 1;
 				else:
 					gridNums += digit;
 				count += 1;
 				colCount += 1;
-			# print gridNums;
 			return errors;
 
 		def colChecker():
@@ -243,12 +215,10 @@ for p in puzzleList:
 			while colIndex < 9:
 				colNums = '';
 				while rowIndex < 9:
-					# print possibleSolution[rowIndex][colIndex];
 					if possibleSolution[rowIndex][colIndex] not in colNums:
 						colNums += possibleSolution[rowIndex][colIndex];
 					else: 
 						errors += 1;
-						# print 'nope'
 					rowIndex += 1;
 				colIndex += 1;
 				rowIndex = 0;
@@ -263,51 +233,25 @@ for p in puzzleList:
 				allErrors = gridChecker(gridRowIndex, gridColIndex);
 				gridColIndex += 3;
 			gridRowIndex += 3;
-
 		allErrors += colChecker();
 		return allErrors;
 
-	def threeStrategySolver(values):
+	def twoStrategySolver(values):
 		# (1) If a square has only one possible value, then eliminate that value from the square's peers. 
 		# (2) If a unit has only one possible place for a value, then put the value there.
-		# (3) if no more squares can be filled in with 1 and 2, guess by trying one possibility out of 2, 
-		# check for errors and if that one doesn't work out, fix the other possibility
-		
-		# solved = False;
 		notDone = True;
-
 		while notDone:
-			# print 'not stuck'
 			singled = singler(values);
 			values = singled[0];
 			notDone = singled[1];
-			# newPuzzle = singled[1];
-			# if newPuzzle == workingPuzzle:
-			# 	gotStuck = True;
-			# else:
-			# 	workingPuzzle = newPuzzle;
-
-			# print values;
-			newValued = unitChecker(values);
-			values = newValued[0];
-			notDone = newValued[1];
-
-			# print ('newValues ', values);
-
+			error = singled[2];
+			if error:
+				return error;
+			unitChecked = unitChecker(values);
+			values = unitChecked[0];
+			notDone = unitChecked[1];
 		return values;		
 
-		# print (possibleValues);
-
-		# while totalErrors > 0: 
-		# totalErrors = checkAllErrors(possiblySolved);
-		# if totalErrors == 0:
-		# 	# add to actual solutions
-		# 	print 'yay!'
-		# 	solved = True;
-		# 	# return values? or workingPuzzle?
-		# else: 
-		# 	print 'nerrrrp'
-		# 	print totalErrors;
 	def solutionChecker(values):
 		solved = True;
 		solution = [];
@@ -316,36 +260,91 @@ for p in puzzleList:
 			line = ''.join(values[index]);
 			if len(line) > 9:
 				# randomGuess(maybeSolved);
-				print ('index', index);
+				# print ('index', index);
 				solved = False;
 				break;
 			else: 
 				solution.append(line);
 			index += 1;
-
 		# print ('solution', solution);
-		# if checkAllErrors(solution) == 0:
+		# if :
 		if solved:
 			return [solution, solved];
-		
 			# maybe return place where it failed?
 		return [index, solved];
 
-	def randomGuess(index):
-		print ('random guess index', index);
+	def randomGuess(rowIndex, values):
+		# (3) if no more squares can be filled in with 1 and 2, guess by trying one possibility out of 2, 
+		# check for errors and if that one doesn't work out, fix the other possibility
+		# print ('random guess index', index);
+		# index of place where it failed (i.e. had too many values still)
+		colIndex = 0;
+		otherGuess = 0;
+		guessed = False
+		while colIndex < 9:
+			if len(values[rowIndex][colIndex]) == 2:
+				# print v;
+				otherGuess = values[rowIndex][colIndex][1];
+				values[rowIndex][colIndex] = values[rowIndex][colIndex][0];
+				# check errors, 
+				 # if checkAllErrors(solution) == 0:
+				# checkSolution(values);
+				# twoStrategySolver(values)
+				guessed = True;
+				break;
+			colIndex += 1;
+		return [values, otherGuess];
 
-		
 
-	threeStrategied = threeStrategySolver(possibleValues);
-	maybeSolved = solutionChecker(threeStrategied);
-	if maybeSolved[1]:
-		print maybeSolved[0];
-		solutionsList.append(maybeSolved[0]);
+	def checkSolution(values):
+		done = False
+		otherGuess = 0;
+		newValues = [];
+		guessed = False;
 
-	else: 
-		print 'guessing!'
-		randomGuess(maybeSolved[0]);
+		while not done:
+			twoStrategied = twoStrategySolver(values);
 
+			if twoStrategied:
+				maybeSolved = solutionChecker(twoStrategied);
+			else:
+				# values ended up with '' 
+				print 'ERROR';
+				done = True;
+
+			if maybeSolved[1]:
+				print maybeSolved[0];
+				solutionsList.append(maybeSolved[0]);
+				done = True;
+				break;
+			elif not guessed: 
+				print 'guessing!'
+				randomGuessed = randomGuess(maybeSolved[0], values);
+				newValues = randomGuessed[0];
+				otherGuess = randomGuessed[1];
+				guessed = True;
+				# now use singler and unitChecker to see if we can get a solution
+				# if errors occur, come back and get the other number instead
+				# possible errors: 1) no possible values for a square 2) more than one of a digit in a unit 
+				# 3)  needs another guess? 
+			else:
+				# already guessed once
+				print 'guess again?'
+				done = True;
+
+
+				
+
+				
+				# newValues = twoStrategySolver(values);
+				# if newValues and checkAllErrors() == 0:
+
+				# else: 
+					# there was an error with values, so go back and pick the other guess
+					# values[rowIndex][colIndex] = otherGuess;
+
+
+	checkSolution(possibleValues);
 
 
 
