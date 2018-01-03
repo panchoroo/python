@@ -127,6 +127,7 @@ def solidarityChecker(puzzle, unit):
 	  			digitLocation = coord
 	  	if digitCount == 1 and len(puzzle[digitLocation]) > 1:
 	  		puzzle[digitLocation] = digit
+	  		# print ('unformatted ', unformat(puzzle))
 	  		changeMade = True
 	return puzzle, changeMade
 
@@ -204,7 +205,11 @@ def unformat(puzzle):
 	for r in range(9):
 		line = ''
 		for c in range(9):
-			line+='('+puzzle[(r,c)]+')'
+			# line += '('+puzzle[(r,c)]+')'
+			if len(puzzle[(r,c)]) == 1:
+				line += puzzle[(r,c)]
+			else:
+				line += '0'
 		p.append(line)
 	return p
 
@@ -214,6 +219,7 @@ if __name__ == '__main__':
 	puzzleList = loadSudokus('p096_sudoku.txt')
 	solutionsList = [];
 	for i, p in enumerate(puzzleList):
+		# print ('puzzle start', p)
 		puzzleDict = formatPuzzle(p)
 		solved = solve(puzzleDict)
 		if oneValue(solved):
