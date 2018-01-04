@@ -83,8 +83,6 @@ def eliminateFromPeers(puzzle):
 	for coord in puzzle:
 		if len(puzzle[coord]) == 1:
 			for peer in getPeers(coord):
-			# If a square has only one possible value, 
-  			# then eliminate that value from the square's peers.
   				if puzzle[coord] in puzzle[peer]:
 					puzzle[peer] = puzzle[peer].replace(puzzle[coord], '')
 					changeMade = True
@@ -107,7 +105,7 @@ def unitChecker(puzzle):
 
 def unitErrorChecker(puzzle):
 	# checks all units for multiples of same digit
-	# len of all things with len 1, len of set of those things should be the same
+	# the length of the list all things with len 1 should be the same as the length of set of those things
 	error = False
 	for unit in ROWS + COLUMNS + BOXES:
 		singlesList = [u for u in unit if len(u) == 1]
@@ -116,7 +114,7 @@ def unitErrorChecker(puzzle):
 	return error 
 
 def solidarityChecker(puzzle, unit):
-	# a unit is a row or a column or a box
+	# a unit is a row or a column or a box (3x3 subgrid)
 	changeMade = False
 	for digit in '123456789':
 		digitCount = 0
@@ -229,6 +227,7 @@ if __name__ == '__main__':
 			print i
 			print p
 
+	# Solving Euler problem #96
 	print ('solutions', solutionsList)
 	print len(solutionsList)
 	sum = 0;
