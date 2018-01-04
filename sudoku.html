@@ -29,8 +29,6 @@
         .square {
             padding: 15px 20px;
             border: 1px solid darkslategrey;
-            /* text-emphasis: bold; */
-            /* background: gray; */ 
         }
         .empty {
             min-width: 53px;
@@ -53,12 +51,9 @@
 
         sudokuApp.init = function () {  
             sudokuApp.updateSudoku(sudokuSteps);
-            // window.setInterval(sudokuApp.updateSudoku(sudokuSteps), 3000);
         }
 
         sudokuApp.eachStep = function(step) {
-            // function timer() {
-                // console.log('timer?')
             console.log('step', step)
             $('ul').empty();
             for (let row in step) {
@@ -74,55 +69,18 @@
                 };
                 $('ul').append(`<li class=row>${rowVal}</li>`);
             };
-
-            // function donothing() {
-                // console.log('dis is dumb');
-            // }
-            // }
-            // setTimeout(donothing(), 1000);
-        }
-
-        
-        // setInterval(sudokuApp.eachStep(sudokuSteps[step]), 3000);
-        sudokuApp.updateSudoku = function(sudokuSteps) {
-            console.log('updating sudoku');
-            while (sudokuApp.step < 39){
-                timer = function (sudokuSteps) {
-                    sudokuApp.eachStep(sudokuSteps[sudokuApp.step]);
-                    sudokuApp.step += 1;
-                    return sudokuApp.step;
-                }
-                setInterval(timer(sudokuSteps, 2000));
-                
-                function getUserBirthday(message) {
-                    console.log(message);
-                }
-
-                setInterval(function () {
-                    getUserBirthday('Hello');
-                }, 1000);
-            }
-            // for (let step in sudokuSteps){
-            // console.log('sudoku steps',sudokuSteps);
-            // console.log('step before eachStep', sudokuApp.step);
-            // console.log('step into eachStep', sudokuSteps
-            
-            // sudokuApp.eachStep(sudokuSteps[sudokuApp.step])
-            // sudokuApp.step += 1;
-            // if (sudokuApp.step > 38){
-            //     sudokuApp.step = 0;
-            // }
-            console.log('step now equals ', sudokuApp.step)
-                // setInterval(sudokuApp.eachStep(sudokuSteps[step]), 3000);
-                // function donothing() {
-                    // console.log('dis is dumb')
-                    // setTimeout(sudokuApp.eachStep(sudokuSteps[step]), 3000);
-                // }
-                
-                // setTimeout(donothing, 1500); 
-            // };
         };
 
+        sudokuApp.updateSudoku = function(sudokuSteps) {
+            console.log('updating sudoku');
+            sudokuSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    console.log('step', index);
+                    sudokuApp.eachStep(step);
+                }, 10000 * (.02) * index);
+            });
+        };
+            
         $(sudokuApp.init());
 
     </script>
