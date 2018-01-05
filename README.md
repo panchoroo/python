@@ -4,16 +4,13 @@ I wrote this Sudoku solver for Project Euler problem number 96.  This is the des
 
        A well constructed Su Doku puzzle has a unique solution and can be solved by logic, although it 
        may be necessary to employ "guess and test" methods in order to eliminate options (there is much 
-       contested opinion over this).  The complexity of the search determines the difficulty of the puzzle; 
-       the example above is considered easy because it can be solved by straight forward direct deduction.
+       contested opinion over this).  The complexity of the search determines the difficulty of the puzzle;
 
-       The 6K text file, sudoku.txt (right click and 'Save Link/Target As...'), contains fifty different
-       Su Doku puzzles ranging in difficulty, but all with unique solutions (the first puzzle in the file
-       is the example above).
+       The 6K text file, sudoku.txt contains fifty different Su Doku puzzles ranging in difficulty, but 
+       all with unique solutions.
 
        By solving all fifty puzzles find the sum of the 3-digit numbers found in the top left corner of 
-       each solution grid; for example, 483 is the 3-digit number found in the top left corner of the 
-       solution grid above.
+       each solution grid.
 
 I use some of the standard naming conventions I found on Peter Norvig's essay (http://norvig.com/sudoku.html) about this problem.  I use the term 'unit' to mean a collection of 9 squares in the 9x9 grid wherein that unit can only contain each digit 1-9 once.  Units can be a row, column, or box (one of the nine 3x3 subgrids).  For every square, it's 'peers' are the set of the squares in its row, its column, and its box.
 
